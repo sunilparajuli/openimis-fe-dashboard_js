@@ -20,4 +20,5 @@ If you want to show the dashboard inside the **Home** module (or any other modul
 <PublishedComponent pubRef="dashboard.Analytics" />
 
 
-![Dashboard Preview](src/docs/dashboard-preview.png)
+![Dashboard Preview](./src/docs/dashboard-preview.png)
+
