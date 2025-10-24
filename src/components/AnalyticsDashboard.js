@@ -9,6 +9,7 @@ import {
 import { bindActionCreators } from "redux";
 import { fetchAllAnalytics } from "../action";
 import Shimmer from "../components/Shimmer";
+import { withModulesManager } from "@openimis/fe-core";
 
 const MetricCard = ({ title, value }) => (
   <Card style={{ height: '100%' }}>
@@ -40,6 +41,12 @@ const ChartCard = ({ title, chartType, data, options }) => (
 );
 
 class AnalyticsDashboard extends Component {
+
+  constructor(props) {
+    super(props);
+    this.dashboardPerHF = props.modulesManager.getConf("dashboard", "dashboard_per_hf", false);
+  }
+
   componentDidMount() {
     this.props.fetchAllAnalytics();
   }
@@ -93,14 +100,16 @@ class AnalyticsDashboard extends Component {
             options={{ hAxis: { title: 'Claimed Amount' }, vAxis: { title: 'Claim' }, legend: 'none' }}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartCard
-            title="Total Claimed Amount by Facility"
-            chartType="ColumnChart"
-            data={[["Facility", "Total Amount"], ...(generalAnalytics.totalClaimedByHealthFacility || []).map(f => [f.healthFacilityName, f.totalClaimedAmount])]}
+        {!this.dashboardPerHF && (
+          <Grid item xs={12} md={6}>
+            <ChartCard
+              title="Total Claimed Amount by Facility"
+              chartType="ColumnChart"
+              data={[["Facility", "Total Amount"], ...(generalAnalytics.totalClaimedByHealthFacility || []).map(f => [f.healthFacilityName, f.totalClaimedAmount])]}
             options={{ hAxis: { title: 'Health Facility', slantedText: true, slantedTextAngle: 45 }, vAxis: { title: 'Total Claimed Amount' }, legend: 'none' }}
           />
         </Grid>
+        )}
 
         {/* Section 3: Epidemiological & Geospatial */}
         <Grid item xs={12} md={6}>
@@ -111,13 +120,15 @@ class AnalyticsDashboard extends Component {
             options={{ is3D: true }}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <ChartCard
-            title="Claim Count by Province"
-            chartType="PieChart"
-            data={[["Province", "Claim Count"], ...(geospatialAnalytics.claimSummaryByProvince || []).map(p => [p.regionName, p.claimCount])]}
-          />
-        </Grid>
+        {!this.dashboardPerHF && (
+          <Grid item xs={12} md={6}>
+            <ChartCard
+              title="Claim Count by Province"
+              chartType="PieChart"
+              data={[["Province", "Claim Count"], ...(geospatialAnalytics.claimSummaryByProvince || []).map(p => [p.regionName, p.claimCount])]}
+            />
+          </Grid>
+        )}
 
         {/* Section 4: Trends and Funnels */}
         <Grid item xs={12}>
@@ -149,4 +160,4 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({ fetchAllAnalytics }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(AnalyticsDashboard));
+export default connect(mapStateToProps, mapDispatchToProps)(injectIntl(withModulesManager(AnalyticsDashboard)));
