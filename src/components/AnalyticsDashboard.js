@@ -52,9 +52,8 @@ class AnalyticsDashboard extends Component {
   }
 
   render() {
-    const { analyticsState } = this.props;
+    const { analyticsState, userHealthFacility } = this.props;
     const { fetching, fetched, error } = analyticsState;
-
     if (fetching) {
       return (
         <Grid container spacing={3}>
@@ -100,7 +99,7 @@ class AnalyticsDashboard extends Component {
             options={{ hAxis: { title: 'Claimed Amount' }, vAxis: { title: 'Claim' }, legend: 'none' }}
           />
         </Grid>
-        {!this.dashboardPerHF && (
+        {(!this.dashboardPerHF || !userHealthFacility) && (
           <Grid item xs={12} md={6}>
             <ChartCard
               title="Total Claimed Amount by Facility"
@@ -120,7 +119,7 @@ class AnalyticsDashboard extends Component {
             options={{ is3D: true }}
           />
         </Grid>
-        {!this.dashboardPerHF && (
+        {(!this.dashboardPerHF || !userHealthFacility) && (
           <Grid item xs={12} md={6}>
             <ChartCard
               title="Claim Count by Province"
@@ -153,7 +152,8 @@ class AnalyticsDashboard extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  analyticsState: state.dashboard, 
+  analyticsState: state.dashboard,
+  userHealthFacility: state.loc.userHealthFacilityFullPath ?? null,
 });
 
 const mapDispatchToProps = (dispatch) => {
