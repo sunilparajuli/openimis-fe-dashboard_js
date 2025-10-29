@@ -8,7 +8,7 @@ const DEFAULT_CONFIG = {
       { key: "dashboard.Analytics", ref: DashboardPage },
     ],
   "core.Router": [{ path: "dashboard/analytics", component: DashboardPage }],
-  "home.HomePage.Blocks": [],
+  "home.HomePage.Blocks": [DashboardPage],
 };
 
 export const DashboardModule = (cfg) => {
